@@ -1,12 +1,12 @@
 (function() {
     var app = angular.module("moviequotes", [ "ui.bootstrap", "modal-controllers", "firebase" ]);
 
-    app.controller("MoviequotesCtrl", function($modal, $firebaseArray) {
+    app.controller("MoviequotesCtrl", function($modal, $firebaseArray, $firebaseAuth) {
         this.navbarCollapsed = true;
+        this.signedIn = false;
         var _this = this;
         //Done: Bind data to Firebase
         var moviequotesRef = new Firebase("https://fisherds-auth-movie-quotes.firebaseio.com/quotes");
-
         this.items = $firebaseArray(moviequotesRef);
 
         var compare = function(a, b) {
@@ -17,12 +17,16 @@
         this.authDataCallback = function(authData) {
             if (authData) {
                 console.log("User " + authData.uid + " is logged in with " + authData.provider);
-                this.uid = authData.uid;
+                _this.uid = authData.uid;
+                _this.signedIn = true;
             } else {
                 console.log("User is logged out");
+                _this.signedIn = false;
+                _this.uid = "";
             }
         };
-        moviequotesRef.onAuth(this.authDataCallback);
+        var auth = $firebaseAuth(moviequotesRef);
+        auth.$onAuth(this.authDataCallback);
 
         this.authHandler = function(error, authData) {
           if (error) {
@@ -33,14 +37,6 @@
       };
 
         this.showAddQuoteDialog = function(movieQuoteFromRow) {
-
-            console.log("Fake login");
-            moviequotesRef.authWithPassword({
-              email    : 'matt@boutell.com',
-              password : 'boutell'
-          }, this.authHandler);
-
-
             this.navbarCollapsed = true;
             var modalInstance = $modal.open({
                 templateUrl : "/partials/addQuoteModal.html",
@@ -100,6 +96,19 @@
                 _this.items.$remove(movieQuoteFromModal);
                 _this.isEditing = false;
             });
+        };
+
+        this.showSignInDialog = function() {
+            console.log("Sign in ");
+            auth.$authWithPassword({
+                email    : 'matt@boutell.com',
+                password : 'boutell'
+            }, this.authHandler);
+        };
+
+        this.signOut = function() {
+            console.log("Sign out");
+            auth.$unauth();
         };
     });
 })();

@@ -33,10 +33,12 @@
       </div>
       <div collapse="moviequotes.navbarCollapsed" class="navbar-collapse">
         <ul class="nav navbar-nav navbar-left">
-          <li><a ng-click="moviequotes.showAddQuoteDialog()" href="#">Add Quote</a></li>
+          <li ng-show="moviequotes.signedIn" ><a ng-click="moviequotes.showAddQuoteDialog()" href="#">Add Quote</a></li>
+          <li ng-show="!moviequotes.signedIn" ><a ng-click="moviequotes.showSignInDialog()" href="#">Sign In</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a ng-model="moviequotes.isEditing" ng-click="moviequotes.navbarCollapsed = true" btn-checkbox href="#">{{moviequotes.isEditing ? "Done" : "Edit"}}</a></li>
+          <li ng-show="moviequotes.signedIn"><a ng-model="moviequotes.isEditing" ng-click="moviequotes.navbarCollapsed = true" btn-checkbox href="#">{{moviequotes.isEditing ? "Done" : "Edit"}}</a></li>
+          <li ng-show="moviequotes.signedIn" ><a ng-click="moviequotes.signOut()" href="#">Sign Out</a></li>
         </ul>
       </div>
     </div>
