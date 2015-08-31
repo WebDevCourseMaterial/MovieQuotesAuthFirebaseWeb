@@ -50,4 +50,36 @@
         };
     });
 
+
+    app.controller("SignInModalCtrl", function ($modalInstance, $timeout, $firebaseAuth, auth) {
+        var _this = this;
+        this.signIn = function () {
+            console.log("Sign in as " + _this.email + "  using password: " + _this.password);
+            console.log("Auth = "+ auth);
+            auth.$authWithPassword({
+                email    : _this.email,
+                password : _this.password
+            }, _this.authHandler);
+            $modalInstance.close();
+        };
+
+        this.authHandler = function(error, authData) {
+            if (error) {
+                console.log("Login Failed!", error);
+            } else {
+                console.log("Authenticated successfully with payload:", authData);
+            }
+        };
+
+        this.cancel = function () {
+            $modalInstance.dismiss("cancel");
+        };
+
+        $modalInstance.opened.then(function() {
+            $timeout(function() {
+                // Note the opened promise is still too early.  Added a 100mS delay to give Chrome time to put the DOM in place.
+                document.querySelector("#email-input").focus();
+            }, 100);
+        });
+    });
 })();

@@ -25,16 +25,8 @@
                 _this.uid = "";
             }
         };
-        var auth = $firebaseAuth(moviequotesRef);
-        auth.$onAuth(this.authDataCallback);
-
-        this.authHandler = function(error, authData) {
-          if (error) {
-            console.log("Login Failed!", error);
-          } else {
-            console.log("Authenticated successfully with payload:", authData);
-          }
-      };
+        this.auth = $firebaseAuth(moviequotesRef);
+        this.auth.$onAuth(this.authDataCallback);
 
         this.showAddQuoteDialog = function(movieQuoteFromRow) {
             this.navbarCollapsed = true;
@@ -100,15 +92,21 @@
 
         this.showSignInDialog = function() {
             console.log("Sign in ");
-            auth.$authWithPassword({
-                email    : 'matt@boutell.com',
-                password : 'boutell'
-            }, this.authHandler);
+            $modal.open({
+                templateUrl : "/partials/signInModal.html",
+                controller : "SignInModalCtrl",
+                controllerAs : "signInModal",
+                resolve : {
+                    auth : function() {
+                        return _this.auth;
+                    }
+                }
+            });
         };
 
         this.signOut = function() {
             console.log("Sign out");
-            auth.$unauth();
+            this.auth.$unauth();
         };
     });
 })();
