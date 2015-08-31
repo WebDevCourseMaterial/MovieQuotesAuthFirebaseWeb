@@ -6,6 +6,7 @@
         var _this = this;
         //Done: Bind data to Firebase
         var moviequotesRef = new Firebase("https://fisherds-auth-movie-quotes.firebaseio.com/quotes");
+
         this.items = $firebaseArray(moviequotesRef);
 
         var compare = function(a, b) {
@@ -13,7 +14,33 @@
         }
         this.items.$watch(function() { _this.items.sort(compare); });
 
+        this.authDataCallback = function(authData) {
+            if (authData) {
+                console.log("User " + authData.uid + " is logged in with " + authData.provider);
+                this.uid = authData.uid;
+            } else {
+                console.log("User is logged out");
+            }
+        };
+        moviequotesRef.onAuth(this.authDataCallback);
+
+        this.authHandler = function(error, authData) {
+          if (error) {
+            console.log("Login Failed!", error);
+          } else {
+            console.log("Authenticated successfully with payload:", authData);
+          }
+      };
+
         this.showAddQuoteDialog = function(movieQuoteFromRow) {
+
+            console.log("Fake login");
+            moviequotesRef.authWithPassword({
+              email    : 'matt@boutell.com',
+              password : 'boutell'
+          }, this.authHandler);
+
+
             this.navbarCollapsed = true;
             var modalInstance = $modal.open({
                 templateUrl : "/partials/addQuoteModal.html",
@@ -22,6 +49,8 @@
             });
             modalInstance.result.then(function(movieQuoteFromModal) {
                 //Done: Add movieQuote to Firebase
+                console.log("Adding the uid");
+                movieQuoteFromModal.uid = this.uid;
                 _this.items.$add(movieQuoteFromModal);
                 _this.isEditing = false;
             });
