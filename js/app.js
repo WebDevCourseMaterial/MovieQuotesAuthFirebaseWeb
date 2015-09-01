@@ -38,7 +38,7 @@
             modalInstance.result.then(function(movieQuoteFromModal) {
                 //Done: Add movieQuote to Firebase
                 console.log("Adding the uid");
-                movieQuoteFromModal.uid = this.uid;
+                movieQuoteFromModal.uid = _this.uid;
                 _this.items.$add(movieQuoteFromModal);
                 _this.isEditing = false;
             });
