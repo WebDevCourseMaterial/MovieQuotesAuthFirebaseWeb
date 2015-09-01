@@ -59,10 +59,10 @@
             <td>{{moviequote.quote}}</td>
             <td>{{moviequote.movie}}</td>
             <td ng-show="moviequotes.isEditing" class="edit-actions">
-              <button ng-click="moviequotes.showUpdateQuoteDialog(moviequote)" type="button" class="btn btn-xs btn-success">
+              <button ng-show="moviequote.uid == moviequotes.uid" ng-click="moviequotes.showUpdateQuoteDialog(moviequote)" type="button" class="btn btn-xs btn-success">
                 <span class="glyphicon glyphicon-pencil"></span>
               </button>
-              <button ng-click="moviequotes.showDeleteQuoteDialog(moviequote)" type="button" class="btn btn-xs btn-danger">
+              <button ng-show="moviequote.uid == moviequotes.uid" ng-click="moviequotes.showDeleteQuoteDialog(moviequote)" type="button" class="btn btn-xs btn-danger">
                 <span class="glyphicon glyphicon-trash"></span>
               </button>
             </td>
